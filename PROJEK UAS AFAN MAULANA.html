@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Informasi Geospasial Pertanahan Kota Pasuruan</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* TEMA OFFICIAL DEEP BLUE */
+            --primary-color: #1B3C73; 
+            --primary-dark: #122a52;  
+            --secondary-color: #F5F7FA; 
+            --text-dark: #2C3333;        
+            --footer-bg: #02060b; 
+            --gold-accent: #FFD700;        
+        }
+
+        /* Smooth Scroll */
+        html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--secondary-color); overflow-x: hidden; color: var(--text-dark); }
+
+        /* --- TOP BAR --- */
+        .top-bar { background: linear-gradient(90deg, #0f254a 0%, var(--primary-color) 100%); color: white; font-size: 0.85rem; padding: 8px 0; font-weight: 300; }
+        .top-bar a { color: white !important; transition: 0.3s; opacity: 0.8; text-decoration: none; cursor: pointer; }
+        .top-bar a:hover { opacity: 1; color: var(--gold-accent) !important; }
+        
+        /* --- NAVBAR --- */
+        .navbar { background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); box-shadow: 0 4px 20px rgba(27, 60, 115, 0.08); padding: 10px 0; z-index: 1050; }
+        .navbar-brand img { height: 75px; width: auto; margin-right: 15px; transition: transform 0.3s; }
+        .navbar-brand img:hover { transform: scale(1.05); }
+        .brand-text { font-size: 1rem; font-weight: 700; line-height: 1.2; color: var(--text-dark); text-transform: uppercase; letter-spacing: 0.5px; }
+        .nav-link { font-weight: 500; color: var(--text-dark) !important; position: relative; margin: 0 10px; cursor: pointer; }
+        .nav-link:hover { color: var(--primary-color) !important; }
+        
+        /* --- HERO SECTION --- */
+        .hero-section { position: relative; width: 100%; height: 90vh; display: flex; align-items: center; justify-content: center; overflow: hidden; z-index: 1; }
+        .hero-section video { position: absolute; top: 50%; left: 50%; min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: -2; transform: translateX(-50%) translateY(-50%); object-fit: cover; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, rgba(11, 22, 35, 0.3), rgba(11, 22, 35, 0.7)); z-index: -1; }
+        
+        .hero-content { 
+            z-index: 10; text-align: center; color: white; padding: 50px; max-width: 900px; 
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: fadeInUp 1s ease-out;
+        }
+        .hero-content h1 { font-size: 3.5rem; font-weight: 800; text-shadow: 0 4px 10px rgba(0,0,0,0.3); margin-bottom: 20px; letter-spacing: -1px; }
+        .hero-content p { font-size: 1.2rem; font-weight: 300; margin-bottom: 30px; color: rgba(255,255,255,0.9); }
+
+        /* --- SERVICES --- */
+        .services-wrapper { position: relative; z-index: 20; margin-top: -60px; padding-bottom: 50px; }
+        .service-box { background: white; padding: 30px 20px; border-radius: 20px; text-align: center; transition: 0.4s; box-shadow: 0 15px 40px rgba(0,0,0,0.08); height: 100%; cursor: pointer; border-bottom: 4px solid transparent; }
+        .service-box:hover { transform: translateY(-10px); border-bottom: 4px solid var(--gold-accent); }
+        .service-icon { font-size: 2.5rem; color: var(--primary-color); margin-bottom: 20px; background: #eef2f6; width: 80px; height: 80px; line-height: 80px; border-radius: 50%; margin: 0 auto 20px auto; transition: 0.3s; }
+        .service-box:hover .service-icon { background: var(--primary-color); color: var(--gold-accent); }
+        
+        /* CSS Modal Service */
+        .service-modal-img { width: 100%; height: 250px; object-fit: cover; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .service-modal-text { text-align: justify; color: var(--text-dark); line-height: 1.8; }
+
+        /* --- MAP SECTION (UPDATED SESUAI SCREENSHOT) --- */
+        .comparison-container { 
+            background: linear-gradient(180deg, #0b1623 0%, #060b11 100%); 
+            padding: 80px 0; 
+            color: white; 
+            margin-top: 30px; 
+        }
+
+        /* Frame Utama seperti Screenshot */
+        .map-card-custom {
+            border: 1px solid var(--gold-accent); /* Garis pinggir emas */
+            border-radius: 15px;
+            background: rgba(13, 25, 42, 0.8); /* Latar belakang gelap transparan */
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.1); /* Efek glow sedikit */
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .map-card-custom:hover {
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.25);
+            transform: translateY(-5px);
+        }
+
+        /* Header Judul di dalam Kotak */
+        .map-card-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3); /* Garis pemisah */
+            text-align: center;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .map-card-title {
+            color: var(--gold-accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin: 0;
+            font-size: 1.1rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* Body tempat Iframe dan Deskripsi */
+        .map-card-body {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Wrapper Iframe */
+        .iframe-wrapper {
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+            position: relative;
+            width: 100%;
+            height: 500px; /* Tinggi disesuaikan agar proporsional */
+            margin-bottom: 20px;
+            background-color: #000;
+        }
+        
+        .map-desc-text {
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            text-align: justify;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+            line-height: 1.6;
+        }
+
+        /* --- BERITA --- */
+        .section-berita { position: relative; background-color: #F5F7FA; padding: 80px 0; }
+        .news-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.05); transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%; display: flex; flex-direction: column; border: 1px solid #eee; }
+        .news-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .news-img-wrapper { position: relative; height: 200px; overflow: hidden; }
+        .news-img-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+        .news-card:hover .news-img-wrapper img { transform: scale(1.1); }
+        .news-date-badge { position: absolute; top: 15px; right: 15px; background: var(--primary-color); color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .news-content { padding: 20px; flex-grow: 1; display: flex; flex-direction: column; }
+        .news-category { color: var(--primary-color); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 8px; }
+        .news-title { font-weight: 700; font-size: 1.1rem; margin-bottom: 10px; line-height: 1.4; color: var(--text-dark); }
+        .news-excerpt { color: #64748b; font-size: 0.9rem; margin-bottom: 20px; flex-grow: 1; }
+        .modal-header { background-color: var(--primary-color); color: white; }
+        .btn-close-white { filter: invert(1) grayscale(100%) brightness(200%); }
+        .modal-body img { width: 100%; border-radius: 10px; margin-bottom: 15px; }
+
+        /* --- FOOTER ESTETIK --- */
+        .custom-shape-divider-bottom { position: relative; top: 5px; width: 100%; overflow: hidden; line-height: 0; transform: rotate(180deg); }
+        .custom-shape-divider-bottom svg { display: block; width: calc(150% + 1.3px); height: 100px; fill: var(--footer-bg); }
+        
+        footer { 
+            background-color: var(--footer-bg); 
+            color: #b0b8c4; 
+            padding-top: 40px; 
+            position: relative;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .footer-title {
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .footer-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--gold-accent);
+            border-radius: 2px;
+        }
+
+        .footer-link-list { padding: 0; margin: 0; list-style: none; }
+        .footer-link-item a { 
+            color: #b0b8c4 !important; 
+            text-decoration: none; 
+            transition: all 0.3s ease; 
+            display: block; 
+            padding: 6px 0;
+            font-size: 0.95rem;
+        }
+        .footer-link-item a:hover { 
+            color: var(--gold-accent) !important; 
+            padding-left: 8px; 
+        }
+        .footer-link-item a i { color: var(--primary-color); margin-right: 8px; transition: 0.3s; }
+        .footer-link-item a:hover i { color: var(--gold-accent); }
+
+        .social-btn {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px; height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+        .social-btn:hover { background: var(--gold-accent); color: var(--footer-bg); transform: translateY(-3px); }
+
+        .footer-map-frame {
+            border: 2px solid var(--gold-accent);
+            border-radius: 12px;
+            overflow: hidden;
+            height: 200px;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+            transition: 0.3s;
+        }
+        .footer-map-frame:hover { box-shadow: 0 0 30px rgba(255, 215, 0, 0.3); transform: scale(1.02); }
+
+        .footer-bottom { 
+            background-color: #000000; 
+            padding: 20px 0; 
+            margin-top: 50px; 
+            color: #6c757d; 
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body id="beranda">
+
+    <div class="top-bar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <span><i class="far fa-calendar-alt me-2"></i> <span id="currentDate">Memuat tanggal...</span> | Pasuruan, Jawa Timur</span>
+            <div>
+                <a href="https://www.facebook.com" target="_blank" class="me-3"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#beranda">
+                <img src="LOGO_PROVJATIM.png" alt="Logo Jatim"> 
+                <div class="d-inline-block align-middle">
+                    <span class="brand-text">SISTEM INFORMASI GEOSPASIAL<br><span style="color: var(--primary-color);">PERTANAHAN KOTA PASURUAN</span></span>
+                </div>
+            </a>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto align-items-center">
+                    <li class="nav-item"><a class="nav-link" href="#beranda">Beranda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#peta-digital">Peta Digital</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#berita">Berita</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#kontak">Kontak</a></li>
+                </ul>
+                <button class="btn btn-primary ms-3 rounded-pill px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#loginModal">
+                    Login <i class="fas fa-sign-in-alt ms-2"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero-section">
+        <div class="video-overlay"></div>
+        <video autoplay muted loop playsinline><source src="Video_Drone_Pasuruan.mp4" type="video/mp4"></video>
+        
+        <div class="hero-content">
+            <h1>SATU PETA UNTUK<br><span style="color: var(--gold-accent);">KOTA PASURUAN</span></h1>
+            <p>Integrasi data spasial dan pertanahan yang akurat, mutakhir, dan terpercaya untuk pembangunan berkelanjutan.</p>
+            <div class="mt-4">
+                <a href="#peta-digital" class="btn btn-warning btn-lg rounded-pill px-5 me-3 fw-bold" style="color: var(--primary-dark);">Jelajahi Peta <i class="fas fa-map-marked-alt ms-2"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <div class="services-wrapper">
+        <section class="container">
+            <div class="row g-4 justify-content-center">
+                <div class="col-md-3 col-6" data-bs-toggle="modal" data-bs-target="#modalPetaBidang">
+                    <div class="service-box">
+                        <div class="service-icon"><i class="fas fa-layer-group"></i></div>
+                        <h6>Peta Bidang</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6" data-bs-toggle="modal" data-bs-target="#modalTataRuang">
+                    <div class="service-box">
+                        <div class="service-icon"><i class="fas fa-city"></i></div>
+                        <h6>Tata Ruang</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6" data-bs-toggle="modal" data-bs-target="#modalZNT">
+                    <div class="service-box">
+                        <div class="service-icon"><i class="fas fa-chart-line"></i></div>
+                        <h6>Zona Nilai Tanah</h6>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6" data-bs-toggle="modal" data-bs-target="#modalLayananDigital">
+                    <div class="service-box">
+                        <div class="service-icon"><i class="fas fa-mobile-alt"></i></div>
+                        <h6>Layanan Digital</h6>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <section class="comparison-container" id="peta-digital">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold text-white">Visualisasi Ruang Kota</h2>
+                <p class="text-white-50">Analisis komparatif model 3D dan 2D tata ruang Kota Pasuruan.</p>
+                <div style="width: 60px; height: 3px; background: var(--gold-accent); margin: 10px auto;"></div>
+            </div>
+
+            <div class="row g-4">
+                
+                <div class="col-lg-6">
+                    <div class="map-card-custom">
+                        <div class="map-card-header">
+                            <h5 class="map-card-title">Peta 3D Penggunaan Tanah Kota Pasuruan</h5>
+                        </div>
+                        
+                        <div class="map-card-body">
+                            <div class="iframe-wrapper">
+                                <iframe title="Sistem Informasi Geospasial Pertanahan Kota Pasuruan" width="100%" height="100%" src="https://ion.cesium.com/stories/viewer/?id=5d45cb27-b425-4823-b4c6-b56e33eb205b" frameborder="0" allow="fullscreen" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe>
+                            </div>
+                            
+                            <div class="map-desc-text">
+                                <p class="mb-0">
+                                    Visualisasi permukaan bumi Kota Pasuruan dalam ruang tiga dimensi (3D). Fitur ini menonjolkan aspek elevasi dan kontur tanah, memberikan gambaran realistis interaksi penggunaan lahan dengan bentang alam.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="map-card-custom">
+                        <div class="map-card-header">
+                            <h5 class="map-card-title">Peta 2D Penggunaan Tanah Kota Pasuruan</h5>
+                        </div>
+                        
+                        <div class="map-card-body">
+                            <div class="iframe-wrapper">
+                                <iframe width="100%" height="100%" frameborder="0" src="index1.html"></iframe>
+                            </div>
+                            
+                            <div class="map-desc-text">
+                                <p class="mb-0">
+                                    Peta digital format datar (2D) dengan sudut pandang tegak lurus. Fokus utama pada presisi lokasi dan kejelasan batas administrasi, memudahkan identifikasi zonasi dan jaringan jalan secara akurat.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section class="section-berita" id="berita">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h6 class="text-primary fw-bold text-uppercase">Berita Terkini</h6>
+                <h2 class="fw-bold">Kabar Geospasial</h2>
+                <div style="width: 60px; height: 4px; background: var(--primary-color); margin: 10px auto;"></div>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="news-card">
+                        <div class="news-img-wrapper">
+                            <span class="news-date-badge">29 Nov 2025</span>
+                            <img src="PTSL.jpeg">
+                        </div>
+                        <div class="news-content">
+                            <div class="news-category">Pertanahan</div>
+                            <h5 class="news-title">Percepatan Program PTSL di Kecamatan Gadingrejo</h5>
+                            <p class="news-excerpt">Pemerintah Kota Pasuruan bersama BPN mempercepat proses pendaftaran tanah sistematis lengkap (PTSL)...</p>
+                            <a href="https://jurnalbogor.com/ptsl-program-yang-bagus-dirusak-si-akal-fulus/" target="_blank" class="btn btn-outline-primary rounded-pill w-100 mt-auto">Baca Selengkapnya</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="news-card">
+                        <div class="news-img-wrapper">
+                            <span class="news-date-badge">28 Nov 2025</span>
+                            <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Tata Ruang">
+                        </div>
+                        <div class="news-content">
+                            <div class="news-category">Tata Ruang</div>
+                            <h5 class="news-title">Sosialisasi Revisi Rencana Tata Ruang Wilayah (RTRW)</h5>
+                            <p class="news-excerpt">Dinas PUPR menggelar konsultasi publik terkait perubahan zonasi penggunaan lahan untuk mendukung investasi...</p>
+                            <button class="btn btn-outline-primary rounded-pill w-100 mt-auto" data-bs-toggle="modal" data-bs-target="#newsModal2">Baca Selengkapnya</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="news-card">
+                        <div class="news-img-wrapper">
+                            <span class="news-date-badge">27 Nov 2025</span>
+                            <img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" alt="Drone Survey">
+                        </div>
+                        <div class="news-content">
+                            <div class="news-category">Inovasi</div>
+                            <h5 class="news-title">Pemanfaatan Drone untuk Pemetaan Batas Kelurahan</h5>
+                            <p class="news-excerpt">Teknologi fotogrametri udara kini digunakan untuk memverifikasi batas administrasi antar kelurahan dengan presisi...</p>
+                            <button class="btn btn-outline-primary rounded-pill w-100 mt-auto" data-bs-toggle="modal" data-bs-target="#newsModal3">Baca Selengkapnya</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-user-lock me-2"></i> Login Pegawai</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body p-4"><form><div class="mb-3"><label class="form-label fw-bold">Username / NIP</label><div class="input-group"><span class="input-group-text"><i class="fas fa-user"></i></span><input type="text" class="form-control" placeholder="Masukkan NIP Anda"></div></div><div class="mb-4"><label class="form-label fw-bold">Password</label><div class="input-group"><span class="input-group-text"><i class="fas fa-lock"></i></span><input type="password" class="form-control" placeholder="Masukkan Password"></div></div><button type="button" class="btn btn-primary w-100 rounded-pill py-2 fw-bold" onclick="alert('Login Berhasil! (Simulasi)')">MASUK</button></form></div></div></div></div>
+    
+    <div class="modal fade" id="modalPetaBidang" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-layer-group me-2"></i> Informasi Peta Bidang</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><img src="https://images.unsplash.com/photo-1599806112354-67f8b5425a06?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="service-modal-img" alt="Peta Bidang"><p class="service-modal-text">Layanan <strong>Peta Bidang</strong> menyajikan informasi spasial mengenai batas-batas kepemilikan tanah.</p></div></div></div></div>
+    <div class="modal fade" id="modalTataRuang" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-city me-2"></i> Informasi Tata Ruang</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="service-modal-img" alt="Tata Ruang"><p class="service-modal-text">Menu <strong>Tata Ruang</strong> menampilkan peta RTRW dan RDTR Kota Pasuruan.</p></div></div></div></div>
+    <div class="modal fade" id="modalZNT" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-chart-line me-2"></i> Zona Nilai Tanah (ZNT)</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><img src="https://images.unsplash.com/photo-1560520653-9e0e4c89eb11?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="service-modal-img" alt="ZNT"><p class="service-modal-text">Layanan <strong>Zona Nilai Tanah</strong> memberikan referensi perkiraan nilai pasar tanah yang wajar.</p></div></div></div></div>
+    <div class="modal fade" id="modalLayananDigital" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered"><div class="modal-content"><div class="modal-header"><h5 class="modal-title"><i class="fas fa-mobile-alt me-2"></i> Layanan Digital</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="service-modal-img" alt="Layanan Digital"><p class="service-modal-text"><strong>Layanan Digital</strong> adalah portal satu pintu untuk mengakses layanan pertanahan secara elektronik.</p></div></div></div></div>
+
+    <div class="modal fade" id="newsModal2" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Revisi Tata Ruang Kota</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><img src="https://images.unsplash.com/photo-1524661135-423995f22d0b" alt="RTRW"><p>Pemerintah Kota Pasuruan menyoroti langkah strategis Dinas PUPR Kota Pasuruan dalam memperbarui Rencana Tata Ruang Wilayah (RTRW). Fokus utamanya adalah aspek makro dan regulasi: menyusun ulang zonasi lahan melalui konsultasi publik agar payung hukum tata ruang kota selaras dengan kebutuhan investasi dan perkembangan zaman.</p></div></div></div></div>
+    <div class="modal fade" id="newsModal3" tabindex="-1" aria-hidden="true"><div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Inovasi Pemetaan Drone</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button></div><div class="modal-body"><img src="https://images.unsplash.com/photo-1473968512647-3e447244af8f" alt="Drone"><p>Pemerintah Kota Pasuruan menampilkan terobosan teknis di lapangan melalui pemanfaatan Teknologi Drone (Fotogrametri). Fokus utamanya adalah aspek mikro dan presisi: menggunakan alat canggih untuk memverifikasi batas administrasi antar-kelurahan secara akurat, mendetail, dan minim sengketa..</p></div></div></div></div>
+
+    <div class="custom-shape-divider-bottom">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none"><path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"></path></svg>
+    </div>
+
+    <footer id="kontak">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="footer-title">Tentang Portal</h5>
+                    <p class="small" style="line-height: 1.8;">Sistem Informasi Geospasial Pertanahan Kota Pasuruan (SIGAP) adalah platform terintegrasi untuk mendukung perencanaan pembangunan kota yang berkelanjutan, transparan, dan akuntabel.</p>
+                    <div class="mt-4">
+                        <a href="https://www.facebook.com" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+                        <a href="https://twitter.com" target="_blank" class="social-btn"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+                
+                <div class="col-md-3 mb-4">
+                    <h5 class="footer-title">Link Terkait</h5>
+                    <ul class="footer-link-list">
+                        <li class="footer-link-item"><a href="https://jatim.atrbpn.go.id/" target="_blank"><i class="fas fa-chevron-right small"></i> Kanwil BPN Jawa Timur</a></li>
+                        <li class="footer-link-item"><a href="https://bappeda.jatimprov.go.id/" target="_blank"><i class="fas fa-chevron-right small"></i> Bappeda Jawa Timur</a></li>
+                        <li class="footer-link-item"><a href="https://pasuruankota.go.id/2019/08/19/profil-ppid/" target="_blank"><i class="fas fa-chevron-right small"></i> PPID Kota Pasuruan</a></li>
+                        <li class="footer-link-item"><a href="https://wa.me/628123456789" target="_blank"><i class="fas fa-chevron-right small"></i> Layanan Pengaduan (WA)</a></li>
+                    </ul>
+                </div>
+                
+                <div class="col-md-5">
+                    <h5 class="footer-title">Kontak & Lokasi</h5>
+                    <p class="small mb-2"><i class="fas fa-map-marker-alt me-2 text-warning"></i>Jl. Pahlawan No. 20, Kota Pasuruan</p>
+                    <p class="small mb-3"><i class="fas fa-envelope me-2 text-warning"></i>info@pasuruankota.go.id</p>
+                    
+                    <div class="mt-3">
+                        <h6 class="text-white small fw-bold mb-2 text-uppercase" style="letter-spacing: 1px; color: var(--gold-accent) !important;">Peta Lokasi Kantor</h6>
+                        <div class="footer-map-frame">
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31610.98779907127!2d112.8724213866346!3d-7.645564883907086!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7c608e5156b85%3A0x4027a76e3531b70!2sPasuruan%2C%20Pasuruan%20City%2C%20East%20Java!5e0!3m2!1sen!2sid!4v1700000000000!5m2!1sen!2sid" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom text-center"><small>© 2026 Pemerintah Kota Pasuruan. All Rights Reserved.</small></div>
+    </footer>
+
+    <script>
+        function updateDate() {
+            const dateElement = document.getElementById('currentDate');
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const formattedDate = now.toLocaleDateString('id-ID', options);
+            dateElement.textContent = formattedDate;
+        }
+        updateDate();
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
